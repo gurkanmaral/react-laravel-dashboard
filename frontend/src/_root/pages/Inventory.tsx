@@ -32,7 +32,7 @@ interface Filters {
 
 const Inventory = () => {
 
-
+  //ts-ignore
   const [filters, setFilters] = useState<Filters>({
     category: '',
     brand: '',
