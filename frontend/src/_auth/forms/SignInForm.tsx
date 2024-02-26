@@ -10,6 +10,9 @@ import { useMutation } from '@tanstack/react-query'
 import Cookies from 'js-cookie';
 
 
+
+const APP_URL = process.env.LARAVEL_URL;
+
 const SignInValidation = z.object({
   email:z.string().email(),
   password: z.string().min(5,{message: 'Password must be at least 8 characters'}).max(50),
@@ -38,7 +41,7 @@ const SignInForm = () => {
 
 
   const signIn = async (userData:SignInProps) => {
-    const response = await fetch('http://localhost/api/login', {
+    const response = await fetch(`${APP_URL}/api/login`, {
         method:'POST',
         headers: {
           'Content-Type': 'application/json',

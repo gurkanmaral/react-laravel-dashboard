@@ -22,6 +22,7 @@ interface SignUpProps {
   email:string;
   password:string;
 }
+const APP_URL = process.env.LARAVEL_URL;
 
 const SignUpForm = () => {
 
@@ -42,7 +43,7 @@ const SignUpForm = () => {
 
   const signUp = async (userData:SignUpProps) => {
     try {
-      const response = await fetch('http://localhost/api/register', {
+      const response = await fetch(`${APP_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
