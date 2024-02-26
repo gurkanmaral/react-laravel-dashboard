@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -12,10 +11,22 @@ import {
 } from "@/components/ui/table"
 import { useDeleteUser, useGetAllUsersInPage } from "@/lib/react-query/queriesAndMutations"
 import { format } from "date-fns";
-import { Loader, Loader2, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-
 import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner"
+
+interface Users {
+  created_at:string;
+  email:string;
+  email_verified_at:string;
+  img?:string | null;
+  id:number;
+  name:string;
+  updated_At:string;
+  username:string;
+}
+
 const Users = () => {
 
   const [deleteResponse,setDeleteResponse] = useState('');
@@ -28,7 +39,7 @@ const Users = () => {
 
   console.log(page)
 
-  const {mutateAsync:deleteUser,isPending:deletingUser} = useDeleteUser();
+  const {mutateAsync:deleteUser} = useDeleteUser();
 
   const { data, isLoading: usersLoading, refetch: userRefetch } = useGetAllUsersInPage(page, searchTerm);
 
@@ -36,11 +47,11 @@ const Users = () => {
 
   const handlePrevButton = () => {
     if (page > 1) {
-        setSearchParams({ page: page - 1 });
+      setSearchParams({ page: (page - 1).toString() });
     }
 };
 const handleNextButton = () => {
-  setSearchParams({ page: page + 1 });
+  setSearchParams({ page: (page + 1).toString() });
 };
 
 useEffect(()=>{
@@ -58,11 +69,12 @@ useEffect(()=>{
   };
 },[searchTerm])
 
-const handleDeleteUser = async(id) => {
+const handleDeleteUser = async(id:number) => {
 
   const response = await deleteUser(id)
 
   setDeleteResponse(response);
+  toast(response)
 }
 
 
@@ -100,7 +112,7 @@ console.log(deleteResponse,'deleteResponse')
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data?.data?.map((item)=> (
+                  {data?.data?.map((item:Users)=> (
                     <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.id}</TableCell>
                     <TableCell>{item.name}</TableCell>

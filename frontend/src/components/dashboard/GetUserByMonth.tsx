@@ -1,6 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import React, { Component, useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React from "react";
 import { Calendar as CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -11,40 +10,39 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
- 
-import { addDays, format } from "date-fns"
-
+import { format } from "date-fns"
 import Chart from "react-apexcharts";
-import { useQuery } from "@tanstack/react-query";
-import { useGetAllUser, usegetAllUser } from "@/lib/react-query/queriesAndMutations";
+import { useGetAllUser } from "@/lib/react-query/queriesAndMutations";
 
 
-
+interface User {
+  count: number;
+  month: number;
+  year: number;
+}
 
 const GetUserByMonth = () => {
-
 
     const [date, setDate] = React.useState<DateRange | undefined>({
       from: undefined,
       to: undefined,
     })
 
-    const fromDatee = date.from ? format(date?.from, 'yyyy-MM-dd') : undefined; 
+    const fromDatee = date?.from ? format(date?.from, 'yyyy-MM-dd') : undefined; 
     const toDatee = date?.to ? format(date?.to, 'yyyy-MM-dd') : undefined; 
 
     const {data:users} = useGetAllUser(fromDatee,toDatee)
 
- 
+    const counts:number[] = users ? users?.map((item:User)=>item.count) : [];
 
-    const counts = users ? users?.map((item)=>item.count) : [];
 
-   const labels = users ? users?.map(item => {
+   const labels = users ? users?.map((item:User) => {
     const monthName = new Date(item.year, item.month - 1).toLocaleString('en-US', { month: 'short' });
     const shortYear = item.year.toString().slice(-2); 
    return `${monthName} ${shortYear}`; 
   }) : [];
  
-  const cumulativeCounts = counts ? counts?.reduce((acc, current, index) => {
+  const cumulativeCounts = counts ? counts?.reduce((acc:number[], current, index) => {
     if (index === 0) {
       acc.push(current);
     } else {
@@ -177,7 +175,6 @@ const GetUserByMonth = () => {
                     <PopoverTrigger asChild>
                       <Button
                         id="date"
-                        variant={""}
                         className={cn(
                           "w-auto justify-start flex gap-2  font-normal",
                           !date && ""
@@ -219,9 +216,12 @@ const GetUserByMonth = () => {
               </div>
               </div>
               <Chart
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               series={state.series as any}
+               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               options={state.options as any}
               type={'line'}
+               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               height={state.options.chart?.height as any}
             />
           </CardContent>

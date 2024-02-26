@@ -3,7 +3,16 @@ import { AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordi
 import { Link } from 'react-router-dom'
 import { useSidebar } from '@/lib/use-sidebar'
 
-const SidebarLinks = ({link, value,text,Icon,trigger}) => {
+type SideBar = {
+    link:string;
+    value: string;
+    text:string;
+    trigger:string;
+    Icon: React.ElementType; 
+}
+
+
+const SidebarLinks = ({link, value,text,Icon,trigger}:SideBar) => {
 
     const {collapsed} = useSidebar((state)=>state);
 

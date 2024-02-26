@@ -1,5 +1,5 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
+import { format, parseISO } from 'date-fns';
+import React from 'react'
 import { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
@@ -7,15 +7,15 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-
-
 import Chart from "react-apexcharts";
 import { useGetTotalLikes } from '@/lib/react-query/queriesAndMutations';
 
-const TotalLikes = () => {
+interface TotalLikes {
+  total_likes:number;
+  date:string;
+}
 
-    
-    const [data,setData] = useState([]);
+const TotalLikes = () => {
 
     const currentDate = new Date();
     const oneYearAgo = new Date(currentDate);
@@ -32,9 +32,14 @@ const toDatee = date?.to ? format(date.to, 'yyyy-MM-dd') : [];
 
 const {data:totalLikes} = useGetTotalLikes(fromDatee,toDatee)
 
- const likes = totalLikes ? totalLikes?.map((item)=>item.total_likes) : [];
+ const likes = totalLikes ? totalLikes?.map((item:TotalLikes)=>item.total_likes) : [];
 
- const dates = totalLikes ?  totalLikes?.map((item)=>item.date) : [];
+ const dates = totalLikes ?  totalLikes?.map((item:TotalLikes)=>item.date) : [];
+
+ const formattedDates = dates?.map((dateString:string) => {
+  const dateObject = parseISO(dateString);
+  return format(dateObject, "dd MMM yy");
+});
 
     const state = {
         series: [{
@@ -73,7 +78,7 @@ const {data:totalLikes} = useGetTotalLikes(fromDatee,toDatee)
                       },			                
                   },
             xaxis: {
-               categories: dates,  
+               categories: formattedDates,  
             },
             dataLabels: {
               enabled: false,
@@ -131,7 +136,6 @@ const {data:totalLikes} = useGetTotalLikes(fromDatee,toDatee)
                         <PopoverTrigger asChild>
                         <Button
                             id="date"
-                            variant={""}
                             className={cn(
                             "w-auto justify-start flex gap-2  font-normal",
                             !date && ""
@@ -172,10 +176,8 @@ const {data:totalLikes} = useGetTotalLikes(fromDatee,toDatee)
                         </div>                     
                         <div>
                         <Chart
-                            series={state.series as any}
-                            options={state.options as any}
-                            type={'bar'}
-                            height={state.options.chart?.height as any}
+                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            series={state.series as any}  options={state.options as any}  type={'bar'}  height={state.options.chart?.height as any}
                             />
                         </div>
                 </div>

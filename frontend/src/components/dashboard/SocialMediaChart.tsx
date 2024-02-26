@@ -1,5 +1,5 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
+import { format, parseISO} from 'date-fns';
+import React from 'react'
 import { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
@@ -12,6 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import Chart from "react-apexcharts";
 import { useGetTotalFollow } from '@/lib/react-query/queriesAndMutations';
 
+interface Follows {
+  date:string;
+  total_follows:string;
+}
+
 const SocialMediaChart = () => {
 
     const [date, setDate] = React.useState<DateRange | undefined>({
@@ -19,6 +24,7 @@ const SocialMediaChart = () => {
         to: undefined,
       })
 
+    
 
 const fromDatee = date?.from ? format(date.from, 'yyyy-MM-dd') : [];
 const toDatee = date?.to ? format(date.to, 'yyyy-MM-dd') : [];
@@ -26,11 +32,11 @@ const toDatee = date?.to ? format(date.to, 'yyyy-MM-dd') : [];
 const {data:totalFollows} = useGetTotalFollow(fromDatee,toDatee)
 
 
- const follows = totalFollows ? totalFollows?.map((item)=>item.total_follows): [];
+ const follows = totalFollows ? totalFollows?.map((item:Follows)=>item.total_follows): [];
 
- const dates = totalFollows ? totalFollows?.map((item)=>item.date) : [];
+ const dates = totalFollows ? totalFollows?.map((item:Follows)=>item.date) : [];
 
-const formattedDates = dates?.map(dateString => {
+const formattedDates = dates?.map((dateString:string) => {
     const dateObject = parseISO(dateString);
     return format(dateObject, "dd MMM yy");
 });
@@ -131,7 +137,6 @@ const formattedDates = dates?.map(dateString => {
                         <PopoverTrigger asChild>
                         <Button
                             id="date"
-                            variant={""}
                             className={cn(
                             "w-auto justify-start flex gap-2  font-normal",
                             !date && ""
@@ -172,10 +177,8 @@ const formattedDates = dates?.map(dateString => {
                         </div>                     
                         <div>
                         <Chart
-                            series={state.series as any}
-                            options={state.options as any}
-                            type={'bar'}
-                            height={state.options.chart?.height as any}
+                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            series={state.series as any}  options={state.options as any}  type={'bar'}  height={state.options.chart?.height as any}
                             />
                         </div>
                 </div>

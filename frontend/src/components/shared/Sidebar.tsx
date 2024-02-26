@@ -3,15 +3,11 @@ import { Button } from '../ui/button'
 import { useSignOutUser } from '@/lib/react-query/queriesAndMutations';
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Link } from 'react-router-dom';
 import Wrapper from "./SidebarWrapper";
 import Toggle from './toggle';
 import { useSidebar } from '@/lib/use-sidebar';
-import { HandCoins, Laptop2, Layers, Layers3, LogOut, LogOutIcon, LucideLogOut, ShoppingCart, Star, User } from 'lucide-react';
+import { HandCoins, Laptop2, Layers3, LayoutDashboard, LucideLogOut, ShoppingCart, Star, User } from 'lucide-react';
 import SidebarLinks from './SidebarLinks';
 import { cn } from '@/lib/utils';
 const Sidebar = () => {
@@ -22,7 +18,7 @@ const Sidebar = () => {
 
 
 
-    const handleSignOut = (e) => {
+    const handleSignOut = (e:React.MouseEvent<HTMLButtonElement>) => {
 
         e.preventDefault()
     
@@ -31,6 +27,13 @@ const Sidebar = () => {
       }
      
       const sidebarLinks = [
+        {
+          value:"0",
+          link: "/dashboard",
+          trigger:"Dashboard",
+          icon:LayoutDashboard,
+          text: "Dashboard"
+        },
         {
           value:"1",
           link: "/users",

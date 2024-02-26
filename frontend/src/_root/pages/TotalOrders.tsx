@@ -1,17 +1,9 @@
 import { useGetOrderDetails } from '@/lib/react-query/queriesAndMutations'
-
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,7 +11,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -37,39 +28,44 @@ import {
 } from "@/components/ui/select"
 import { format } from 'date-fns'
 import { Separator } from '@/components/ui/separator'
- 
- 
+import OrderPageItem from "../../lib/types";
+
+
+interface FilterState {
+  status?: string;
+  search?:string;
+  
+}
 
 const TotalOrders = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const [searchTerm,setSearchTerm] = useState('');
   const [searchInput, setSearchInput] = useState('');
 
-  const [filters,setFilters] = useState({
+  const [filters,setFilters] = useState<FilterState>({
     search: '',
     status: '',
   });
 
 
-
 const {data:orderDetails,isLoading,refetch:orderDetailsRefecth} = useGetOrderDetails(filters,page)
 
-console.log(orderDetails)
+
 
 useEffect(()=>{
-  orderDetailsRefecth
 
+  orderDetailsRefecth();
 },[page,orderDetailsRefecth])
 
 
-const handleFilterChange = (value, filterType) => {
-  setFilters(prevFilters => {
-   
+const handleFilterChange = (value:string, filterType: keyof FilterState) => {
+  setFilters((prevFilters) => {
+
       if (value === "All") {
+     // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const {[filterType]: _, ...rest} = prevFilters; 
-          return {...rest};
+          return {...rest, [filterType]: ''} as FilterState;
       }
       return {...prevFilters, [filterType]: value};
   });
@@ -77,11 +73,11 @@ const handleFilterChange = (value, filterType) => {
 
 const handlePrevButton = () => {
   if (page > 1) {
-      setSearchParams({ page: page - 1 });
+      setSearchParams({ page: (page - 1).toString() });
   }
 };
 const handleNextButton = () => {
-setSearchParams({ page: page + 1 });
+  setSearchParams({ page: (page + 1).toString() });
 };
 
 useEffect(() => {
@@ -145,7 +141,7 @@ console.log(filters)
             </TableHeader>
             <TableBody>
             {
-            orderDetails?.data.map((item)=> (
+            orderDetails?.data.map((item:OrderPageItem)=> (
               <TableRow key={item.id}>
               <TableCell className="font-medium">{item.status}</TableCell>
               <TableCell>{item.user.email}</TableCell>

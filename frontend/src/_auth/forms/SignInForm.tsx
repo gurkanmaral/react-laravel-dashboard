@@ -1,27 +1,30 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from "zod"
-import { useToast } from "@/components/ui/use-toast"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { useDispatch } from 'react-redux'
 import Cookies from 'js-cookie';
-import { setCredentials } from '@/lib/redux/authSlice'
 
 
 const SignInValidation = z.object({
   email:z.string().email(),
   password: z.string().min(5,{message: 'Password must be at least 8 characters'}).max(50),
 })
+interface SignInProps {
+  email:string;
+  password:string;
+
+}
 
 
 const SignInForm = () => {
 
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof SignInValidation>>({
 
@@ -33,7 +36,8 @@ const SignInForm = () => {
     }
   })
 
-  const signIn = async (userData) => {
+
+  const signIn = async (userData:SignInProps) => {
     const response = await fetch('http://localhost/api/login', {
         method:'POST',
         headers: {
@@ -50,14 +54,15 @@ const SignInForm = () => {
     
     Cookies.set('dashboard_token',data.token);
     // dispatch(setCredentials({ token: data.token }));
-    console.log(data)
+  
+    navigate("/")
     
     return data;
     
   }
 
   const mutation = useMutation({
-
+     // @ts-expect-error: Temporarily
        mutationFn:(values) => signIn(values)
   })
 
@@ -66,7 +71,7 @@ const SignInForm = () => {
   async function onSubmit(values: z.infer<typeof SignInValidation>)  {
 
     console.log('Form submitted', values);
-
+  // @ts-expect-error: Temporarily
     mutation.mutate(values)
 
   }

@@ -1,35 +1,15 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
-import { DateRange } from 'react-day-picker';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-
-
-import Chart from "react-apexcharts";
 import { useGetCancellationData } from '@/lib/react-query/queriesAndMutations';
 import ReactApexChart from 'react-apexcharts';
 
+interface Cancellation {
+  cancellation_reason:string;
+  total:number;
+}
+
 const CancellationChart = () => {
 
-    
-    // const [data,setData] = useState([]);
-
-    const currentDate = new Date();
-    const oneYearAgo = new Date(currentDate);
-    oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
-
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: undefined,
-        to: undefined,
-      })
-
-      const {data:cancellationData,isLoading} = useGetCancellationData();
-
-
+      const {data:cancellationData} = useGetCancellationData();
 
     //   useEffect(() => {
     //     // Determine the URL based on whether dates are selected
@@ -65,9 +45,9 @@ const CancellationChart = () => {
     // }, [date?.from, date?.to]);
 
 
-const cancellation = cancellationData ? cancellationData?.map((item)=>item.cancellation_reason) : [];
+const cancellation = cancellationData ? cancellationData?.map((item:Cancellation)=>item.cancellation_reason) : [];
 
-const total = cancellationData ? cancellationData?.map((item)=>item.total) : [];
+const total = cancellationData ? cancellationData?.map((item:Cancellation)=>item.total) : [];
 
 
 
@@ -75,7 +55,7 @@ const total = cancellationData ? cancellationData?.map((item)=>item.total) : [];
       series: total,
       options: {
         chart: {
-          width: 380,
+          width: 200,
           type: 'pie' as const,
         },
         labels: cancellation,
@@ -96,19 +76,10 @@ const total = cancellationData ? cancellationData?.map((item)=>item.total) : [];
         }
       }
 
-    
-
-      const handleReset = () => {
-        setDate({
-            from: undefined,
-            to: undefined
-        })
-      }
-
 
   return (
     <div>
-        <Card className='border-2 border-black/75 p-2  m-0 shadow shadow-black/55'>
+        <Card className='border-2 border-black/75 p-2  m-0 shadow shadow-black/55 '>
             <CardHeader>
                 <CardTitle>
                     Cancellation Data
@@ -119,8 +90,8 @@ const total = cancellationData ? cancellationData?.map((item)=>item.total) : [];
                         <div className='flex justify-between '>
                            
                         </div>                     
-                        <div className='mt-20'>
-                        <ReactApexChart options={state.options} series={state.series} type="pie" height={350} />
+                        <div className='mt-10'>
+                        <ReactApexChart options={state.options} series={state.series} type="pie" height={300} />
                         </div>
                 </div>
             </CardContent>

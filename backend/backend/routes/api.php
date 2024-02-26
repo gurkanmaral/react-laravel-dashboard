@@ -47,6 +47,7 @@ Route::get('/get-cancellation-data',[OrderController::class, 'getCancellationRea
 Route::get('/get-total-revenue',[OrderController::class, 'getTotalRevenue']);
 Route::get('/get-order-details', [OrderController::class,'getOrderDetails']);
 Route::get('/get-country-details',[OrderController::class,'getCountryDetails']);
+Route::get('/get-revenue',[OrderController::class, 'getRevenue']);
 
 Route::get('/get-average-ratings',[ReviewController::class, 'getAverageProductRatings']);
 Route::Get('/get-review-details',[ReviewController::class,'getReviewDetails']);

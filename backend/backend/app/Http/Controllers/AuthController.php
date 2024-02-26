@@ -12,19 +12,27 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+    
+            $token = $user->createToken('api-token')->plainTextToken;
+    
+            return response()->json([
+                'message' => 'User successfully registered',
+                'token' => $token,
+            ]);
+        } catch (\Exception $e) {
 
-        $token = $user->createToken('api-token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'User successfully registered',
-            'token' => $token,
-        ],201);
+            return response()->json([
+                'message' => 'User registration failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function login(LoginRequest $request) 

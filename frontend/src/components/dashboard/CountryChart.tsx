@@ -1,38 +1,19 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
-import { DateRange } from 'react-day-picker';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-
-
 import Chart from "react-apexcharts";
 import { useGetCountryData } from '@/lib/react-query/queriesAndMutations';
 
+interface Countries {
+  shipping_address: string;
+  total:number;
+}
+
 const CountryChart = () => {
-
-    
   
+  const {data:countries} = useGetCountryData();
 
-    const currentDate = new Date();
-    const oneYearAgo = new Date(currentDate);
-    oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+ const address = countries ? countries.map((item:Countries)=>item.shipping_address) : [];
 
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: undefined,
-        to: undefined,
-      })
-
-      const {data:countries,isLoading} = useGetCountryData();
-
-
- const address = countries ? countries.map((item)=>item.shipping_address) : [];
-
- const total = countries ?  countries.map((item)=>item.total) : [];
-
+ const total = countries ?  countries.map((item:Countries)=>item.total) : [];
 
 
     const state = {
@@ -105,14 +86,6 @@ const CountryChart = () => {
         }
       }
 
-    
-
-      const handleReset = () => {
-        setDate({
-            from: undefined,
-            to: undefined
-        })
-      }
 
 
   return (
@@ -132,9 +105,12 @@ const CountryChart = () => {
                         </div>                     
                         <div className='mt-10'>
                         <Chart
+                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             series={state.series as any}
+                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             options={state.options as any}
                             type={'bar'}
+                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             height={state.options.chart?.height as any}
                             />
                         </div>

@@ -22,9 +22,9 @@ const Dashboard = () => {
          <GetTotalOrdersByDate />
          <MostBoughProduct />
          <CountryChart />
+         <TotalRevenueChart />
          <DeliveredTimeChart />
          <CancellationChart />
-         <TotalRevenueChart />
          <ReviewChart />
          <SocialMediaChart />
          <TotalLikes />

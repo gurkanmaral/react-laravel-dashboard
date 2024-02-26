@@ -3,28 +3,45 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetReviewDetails } from '@/lib/react-query/queriesAndMutations'
 import { format } from 'date-fns'
-import React from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+interface ReviewPageProps {
+  created_at:string;
+  id:number;
+  product_id:number;
+  rating:number;
+  review_text:string;
+  updated_at:string;
+  user_id:number;
+  product: ReviewPageProductProps;
+  user:ReviewPageUserProps;
+}
+type ReviewPageUserProps = {
+  id:number;
+  email:string;
+  username:string;
+}
+
+type ReviewPageProductProps = {
+  id:number;
+  title:string;
+}
+
 const ReviewPage = () => {
-
-  
-
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get('page') || '1', 10);
 
   const {data:reviewData,isLoading} = useGetReviewDetails(page)
-  console.log(reviewData)
 
   const handlePrevButton = () => {
     if (page > 1) {
-        setSearchParams({ page: page - 1 });
+      setSearchParams({ page: (page - 1).toString() });
     }
 };
 const handleNextButton = () => {
-  setSearchParams({ page: page + 1 });
+  setSearchParams({ page: (page + 1).toString() });
 };
 
 
@@ -35,10 +52,10 @@ const handleNextButton = () => {
             <div className='w-full grid grid-cols-1 mt-10 gap-10'>
           {
           isLoading ? (
-            <div className='w-full flex flex-col gap-10 '>
-              <div className='grid grid-cols-10 gap-2 w-full'>
+            <div className='w-full max-w-5xl items-center justify-center flex flex-col gap-10 '>
+              <div className='grid grid-cols-10 gap-2 w-full '>
                 <Skeleton className='rounded-full w-[75px] h-[75px] bg-gray-600 col-span-1 ' />
-                <div className='grid-cols-9 w-[600px]'>
+                <div className='grid-cols-9 w-[300px] md:w-[700px]'>
                     <div className='flex flex-col w-full'>
                         <div className='flex justify-between w-full'>
                             <div className='flex flex-col gap-2'>
@@ -58,7 +75,7 @@ const handleNextButton = () => {
               </div>
               <div className='grid grid-cols-10 gap-2 w-full'>
                 <Skeleton className='rounded-full w-[75px] h-[75px] bg-gray-600 col-span-1 ' />
-                <div className='grid-cols-9 w-[600px]'>
+                <div className='grid-cols-9 w-[300px] md:w-[700px]'>
                     <div className='flex flex-col w-full'>
                         <div className='flex justify-between w-full'>
                             <div className='flex flex-col gap-2'>
@@ -78,7 +95,7 @@ const handleNextButton = () => {
               </div>
               <div className='grid grid-cols-10 gap-2 w-full'>
                 <Skeleton className='rounded-full w-[75px] h-[75px] bg-gray-600 col-span-1 ' />
-                <div className='grid-cols-9 w-[600px]'>
+                <div className='grid-cols-9 w-[300px] md:w-[700px]'>
                     <div className='flex flex-col w-full'>
                         <div className='flex justify-between w-full'>
                             <div className='flex flex-col gap-2'>
@@ -98,7 +115,7 @@ const handleNextButton = () => {
               </div>
           </div>) 
           :
-          reviewData?.data.map((item)=>(
+          reviewData?.data.map((item:ReviewPageProps)=>(
            <>
              <div key={item.id} className='grid grid-cols-10 gap-2'>
               <div className=' flex w-full col-span-1  '>

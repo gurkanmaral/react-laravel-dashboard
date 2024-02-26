@@ -1,31 +1,39 @@
 import { Input } from '@/components/ui/input'
 import { useAddStock, useGetInventoryLevels } from '@/lib/react-query/queriesAndMutations'
-
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Button } from '@/components/ui/button';
+import { toast } from "sonner"
+interface Inventory {
+  id:number;
+  numberInStock:number;
+  title:string;
+}
 
-
+interface Filters {
+  category:string;
+  brand:string;
+  color:string;
+}
 
 const Inventory = () => {
 
-  const [filters, setFilters] = useState({
+
+  const [filters, setFilters] = useState<Filters>({
     category: '',
     brand: '',
     color: '',
@@ -33,6 +41,8 @@ const Inventory = () => {
 const [search,setSearch] = useState('');
 const [stock,setStock] = useState(0);
 const [response,setResponse] = useState('');
+
+// @ts-expect-error: Temporarily
   const {data,isLoading} = useGetInventoryLevels(filters);
 
   const {mutateAsync:addStock,isPending} = useAddStock();
@@ -40,15 +50,16 @@ const [response,setResponse] = useState('');
 
   console.log(data)
 
-  const filteredData = data?.filter((item)=>item.title.includes(search));
+  const filteredData = data?.filter((item:Inventory)=>item.title.includes(search));
 
-  const handleAddStock = async (id) => {
+  const handleAddStock = async (id:number) => {
 
     const response = await addStock({id,stock})
 
     setResponse(response)
 
     setStock(0);
+    toast("stock is added")
   }
   
   console.log(response)
@@ -82,7 +93,7 @@ const [response,setResponse] = useState('');
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredData?.map((item) => (
+                      {filteredData?.map((item:Inventory) => (
                         <TableRow key={item.title}>
                           <TableCell className="font-medium">
                             <img src="/public/laptops-category.png" alt="" />
@@ -106,7 +117,7 @@ const [response,setResponse] = useState('');
                                         <Input
                                           type='number'
                                           className=" h-8"
-                                          onChange={(e)=>setStock(e.target.value)}
+                                          onChange={(e)=>setStock(Number(e.target.value) || 0)}
                                           value={stock}
                                         />
                                       </div>                                                                   

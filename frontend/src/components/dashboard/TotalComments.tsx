@@ -1,5 +1,5 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
+import { format, parseISO} from 'date-fns';
+import React from 'react'
 import { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
@@ -7,10 +7,13 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-
-
 import Chart from "react-apexcharts";
 import { useGetTotalComments } from '@/lib/react-query/queriesAndMutations';
+
+interface TotalComment {
+  total_comments:number;
+  date:string;
+}
 
 const TotalComments = () => {
 
@@ -27,9 +30,15 @@ const {data:totalComments} = useGetTotalComments(fromDatee,toDatee)
 
 
 
- const comments = totalComments ? totalComments?.map((item)=>item.total_comments) : [];
+ const comments = totalComments ? totalComments?.map((item:TotalComment)=>item.total_comments) : [];
 
- const dates = totalComments ?  totalComments?.map((item)=>item.date) : [];
+ const dates = totalComments ?  totalComments?.map((item:TotalComment)=>item.date) : [];
+
+ const formattedDates = dates?.map((dateString:string) => {
+  const dateObject = parseISO(dateString);
+  return format(dateObject, "dd MMM yy");
+});
+
 
     const state = {
         series: [{
@@ -68,7 +77,7 @@ const {data:totalComments} = useGetTotalComments(fromDatee,toDatee)
                       },			                
                   },
             xaxis: {
-               categories: dates || [],  
+               categories: formattedDates || [],  
             },
             dataLabels: {
               enabled: false,
@@ -125,7 +134,6 @@ const {data:totalComments} = useGetTotalComments(fromDatee,toDatee)
                         <PopoverTrigger asChild>
                         <Button
                             id="date"
-                            variant={""}
                             className={cn(
                             "w-auto justify-start flex gap-2  font-normal",
                             !date && ""
@@ -166,10 +174,8 @@ const {data:totalComments} = useGetTotalComments(fromDatee,toDatee)
                         </div>                     
                         <div>
                         <Chart
-                            series={state.series as any}
-                            options={state.options as any}
-                            type={'bar'}
-                            height={state.options.chart?.height as any}
+                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            series={state.series as any}  options={state.options as any}  type={'bar'}  height={state.options.chart?.height as any}
                             />
                         </div>
                 </div>

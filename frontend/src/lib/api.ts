@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import axios from "axios";
-import { format } from "date-fns";
 import { format, parseISO, startOfMonth } from 'date-fns';
+import Filters from "./types";
 
 
 export async function getCurrentUser()
@@ -57,7 +57,7 @@ export async function signOutUser()
 }
 
 
-export async function getAllUsers(fromDate,toDate)
+export async function getAllUsers(fromDate:string,toDate:string)
 {
 
   let apiUrl = 'http://localhost/api/users-by-month';
@@ -78,11 +78,19 @@ export async function getAllUsers(fromDate,toDate)
   }
 }
 
-export async function getInventoryLevels(filters)
-{
-  let apiUrl = 'http://localhost/api/users-by-month';
 
-    const queryParams = new URLSearchParams(filters).toString();
+export async function getInventoryLevels(filters:Filters)
+{
+  let apiUrl = 'http://localhost/api/inventory-levels';
+
+
+      const queryParams = new URLSearchParams(
+        Object.entries(filters)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .filter(([_, value]) => value !== '')
+      ).toString();
+
+
     apiUrl= `http://localhost/api/inventory-levels?${queryParams}`
 
     try {
@@ -98,7 +106,7 @@ export async function getInventoryLevels(filters)
 
 
 
-export async function getTotalOrders(fromDate,toDate)
+export async function getTotalOrders(fromDate:string,toDate:string)
 {
   let url = 'http://localhost/api/order-count';
 
@@ -125,10 +133,21 @@ export async function getTotalOrders(fromDate,toDate)
     }
 
 }
+interface Item {
+  date: string; 
+  total_bought_products: string; 
+  order_count: number;
+}
 
+interface GroupedData {
+  date: string;
+  total_bought_products: number;
+  order_count: number;
+}
 
-const groupDataByMonth = (data) => {
-  const grouped = data.reduce((acc, item) => {
+const groupDataByMonth = (data:Item[]) => {
+
+  const grouped = data.reduce((acc:Record<string, GroupedData>, item: Item) => {
     const month = format(startOfMonth(parseISO(item.date)), 'yyyy-MM');
     if (!acc[month]) {
       acc[month] = { date: month, total_bought_products: 0,order_count: 0 };
@@ -141,17 +160,10 @@ const groupDataByMonth = (data) => {
   return Object.values(grouped);
 };
 
-export async function mostBoughtProducts (fromDate,toDate)  {
-
-  let url = 'http://localhost/api/most-bought-product';
-
- 
-    if (fromDate && toDate) {
-      url += `?startDate=${fromDate}&endDate=${toDate}`; 
-  }
-  
+export async function mostBoughtProducts ()  {
+   
   try {
-    const response = await axios.get(url);
+    const response = await axios.get('http://localhost/api/most-bought-product');
 
   
       return response.data;
@@ -167,10 +179,8 @@ export async function mostBoughtProducts (fromDate,toDate)  {
 
 export async function getCountryData()
 {
-  let url = 'http://localhost/api/get-countries-data';
-
   try {
-    const response = await axios.get(url);
+    const response = await axios.get('http://localhost/api/get-countries-data');
 
   
     return response.data;
@@ -183,10 +193,10 @@ export async function getCountryData()
 
 export async function getDeliveryTime()
 {
-  let url = 'http://localhost/api/get-delivered-data';
+
 
   try {
-    const response = await axios.get(url);
+    const response = await axios.get('http://localhost/api/get-delivered-data');
 
   
     return response.data;
@@ -199,9 +209,9 @@ export async function getDeliveryTime()
 
 export async function getCancellationData()
 {
-  let url = 'http://localhost/api/get-cancellation-data';
+
   try {
-    const response = await axios.get(url);
+    const response = await axios.get('http://localhost/api/get-cancellation-data');
 
   
     return response.data;
@@ -212,7 +222,7 @@ export async function getCancellationData()
   }
 }
 
-export async function getRevenue(fromDate,toDate)
+export async function getRevenue(fromDate:string,toDate:string)
 {
   let url = 'http://localhost/api/get-total-revenue';
 
@@ -233,10 +243,9 @@ try {
 }
 export async function getReviews()
 {
-  let url = 'http://localhost/api/get-average-ratings';
 
   try {
-    const response = await axios.get(url);
+    const response = await axios.get('http://localhost/api/get-average-ratings');
   
     return response.data;
       
@@ -246,7 +255,7 @@ export async function getReviews()
   }
 }
 
-export async function getTotalFollow(fromDate,toDate)
+export async function getTotalFollow(fromDate:string,toDate:string)
 {
   let url = 'http://localhost/api/get-total-follows';
 
@@ -265,7 +274,7 @@ try {
 
 
 }
-export async function getTotalLikes(fromDate,toDate)
+export async function getTotalLikes(fromDate:string,toDate:string)
 {
   let url = 'http://localhost/api/get-total-likes';
 
@@ -282,7 +291,7 @@ try {
   throw error;
 }
 }
-export async function getTotalComments(fromDate,toDate)
+export async function getTotalComments(fromDate:string,toDate:string)
 {
   let url = 'http://localhost/api/get-total-comments';
 
@@ -300,7 +309,7 @@ try {
 }
 }
 
-export async function getAllUsersInUserPage(page, searchTerm)
+export async function getAllUsersInUserPage(page:number, searchTerm:string)
 {
 
   try {
@@ -314,7 +323,7 @@ export async function getAllUsersInUserPage(page, searchTerm)
 }
 }
 
-export async function deleteUser(id)
+export async function deleteUser(id:number)
 {
 
   try {
@@ -328,10 +337,17 @@ export async function deleteUser(id)
 
 }
 
-export async function getOrderDetails(page,filters)
+interface FilterState {
+  status?: string;
+  search?:string;
+  
+}
+
+export async function getOrderDetails(page:number,filters:FilterState)
 {
   let apiUrl = 'http://localhost/api/get-order-details';
   try {
+    // @ts-expect-error asda
     const queryParams = new URLSearchParams(filters).toString();
     
     apiUrl= `http://localhost/api/get-order-details?${queryParams}`
@@ -345,11 +361,18 @@ export async function getOrderDetails(page,filters)
     throw error;
   }
 }
+interface ProductFilters {
+  category?: string;
+  brand?: string;
+  color?: string;
+  search?: string;
+}
 
-export async function getProductDetails(filters,page)
+export async function getProductDetails(filters:ProductFilters,page:number)
 {
   let apiUrl = 'http://localhost/api/get-product-details';
   try {
+    // @ts-expect-error asda
     const queryParams = new URLSearchParams(filters).toString();
     apiUrl= `http://localhost/api/get-product-details?${queryParams}`
 
@@ -376,7 +399,7 @@ export async function getCountryDetails()
   }
 }
 
-export async function getReviewDetails(page)
+export async function getReviewDetails(page:number)
 {
   try {
     const response = await axios.get(`http://localhost/api/get-review-details`,{
@@ -390,7 +413,7 @@ export async function getReviewDetails(page)
   }
 }
 
-export async function addStock({ id, stock })
+export async function addStock({ id, stock }:{id:number,stock:number})
 {
   try {
     const response = await axios.post(`http://localhost/api/add-stock/${id}`,{
@@ -398,6 +421,17 @@ export async function addStock({ id, stock })
     })
 
     return response.data;
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+}
+
+export async function getRevenueInPage()
+{
+  try {
+      const response = await axios.get('http://localhost/api/get-revenue')
+      return response.data
   } catch (error) {
     console.log(error)
     throw error;

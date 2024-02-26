@@ -1,5 +1,5 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
+import { format } from 'date-fns';
+import React from 'react'
 import { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
@@ -11,6 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 import Chart from "react-apexcharts";
 import { useGetTotalOrders } from '@/lib/react-query/queriesAndMutations';
+
+interface Orders {
+  date: string;
+  order_count:number;
+  total_bought_products:number;
+}
 
 const GetTotalOrdersByDate = () => {
 
@@ -25,7 +31,6 @@ const toDatee = date?.to ? format(date.to, 'yyyy-MM-dd') : '';
 
 
 const {data:orders} = useGetTotalOrders(fromDatee,toDatee)
-
 
 
     //   useEffect(() => {
@@ -63,11 +68,11 @@ const {data:orders} = useGetTotalOrders(fromDatee,toDatee)
 
   
 
-    const dates = orders ? orders?.map(item => item.date) : [];
+    const dates = orders ? orders?.map((item:Orders) => item.date) : [];
 
-    const totalBoughtProducts = orders ? orders?.map(item => parseInt(item.total_bought_products)) : [];
+    const totalBoughtProducts = orders ? orders?.map((item:Orders) => item.total_bought_products) : [];
 
-    const totalOrders= orders ? orders?.map((item)=>item.order_count) : [];
+    const totalOrders= orders ? orders?.map((item:Orders)=>item.order_count) : [];
 
     const state = {
         series: [{
@@ -207,7 +212,6 @@ const {data:orders} = useGetTotalOrders(fromDatee,toDatee)
                         <PopoverTrigger asChild>
                         <Button
                             id="date"
-                            variant={""}
                             className={cn(
                             "w-auto justify-start flex gap-2  font-normal",
                             !date && ""
@@ -247,10 +251,8 @@ const {data:orders} = useGetTotalOrders(fromDatee,toDatee)
                         </div>                     
                         <div>
                         <Chart
-                            series={state.series as any}
-                            options={state.options as any}
-                            type={'line'}
-                            height={state.options.chart?.height as any}
+                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            series={state.series as any} options={state.options as any} type={'line'} height={state.options.chart?.height as any}
                             />
                         </div>
                 </div>

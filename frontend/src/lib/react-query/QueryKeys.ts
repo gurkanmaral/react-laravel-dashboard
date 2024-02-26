@@ -22,5 +22,6 @@ export enum QUERY_KEYS {
     GET_PRODUCT_DETAILS = "getProductDetails",
     GET_COUNTRY_DETAILS = "getCountryDetails",
     GET_REVIEW_DETAILS = "getReviewDetails",
+    GET_REVENUE_PAGE = "getRevenuePage",
     
 }

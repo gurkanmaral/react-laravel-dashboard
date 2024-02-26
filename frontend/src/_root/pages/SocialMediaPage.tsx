@@ -1,5 +1,3 @@
-import { Facebook, FacebookIcon } from 'lucide-react'
-import React from 'react'
 
 const SocialMediaPage = () => {
   return (

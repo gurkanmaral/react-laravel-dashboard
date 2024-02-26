@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import Chart from "react-apexcharts";
 import { Button } from '../ui/button';
@@ -11,9 +11,20 @@ import {
   } from "@/components/ui/select"
 import { useGetInventoryLevels } from '@/lib/react-query/queriesAndMutations';
 
+interface Inventory  {
+
+  id:number,
+  numberInStock:number,
+  title:string,
+}
+interface FilterState {
+  category: string;
+  brand: string;
+  color: string;
+}
 const GetInventoryLevels = () => {
 
-    const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState<FilterState>({
         category: '',
         brand: '',
         color: '',
@@ -24,18 +35,18 @@ const GetInventoryLevels = () => {
 
 
 
-const handleFilterChange = (value, filterType) => {
+const handleFilterChange = (value:string, filterType:keyof FilterState) => {
     setFilters(prevFilters => {
-      
         if (value === "All") {
+           // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {[filterType]: _, ...rest} = prevFilters; 
-            return {...rest};
+            return { ...rest, [filterType]: undefined } as FilterState;
         }
         return {...prevFilters, [filterType]: value};
     });
 };
-const seriesData = inventoryLevels ? inventoryLevels?.map(item => item.numberInStock) : [];
-const categoriesData = inventoryLevels ? inventoryLevels?.map(item => item.title) : [];
+const seriesData = inventoryLevels ? inventoryLevels?.map((item:Inventory) => item.numberInStock) : [];
+const categoriesData = inventoryLevels ? inventoryLevels?.map((item:Inventory) => item.title) : [];
 
 
 const state = {
@@ -184,9 +195,12 @@ const state = {
                   </Button>
                 </div>
                 <Chart
+                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 series={state.series as any}
+                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 options={state.options as any}
                 type={'bar'}
+                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 height={state.options.chart?.height as any}
                 />
             </div>

@@ -80,11 +80,9 @@ class OrderController extends Controller
             ->groupBy('date')
             ->orderBy('date')
             ->get();
-
-            $totalRevenue = round($orders->sum('totalPrice'));
+          
             $responseData = [
                 'orders' => $orders,
-                'totalRevenue' => $totalRevenue,
             ];
         
         return response()->json($responseData);
@@ -123,5 +121,23 @@ class OrderController extends Controller
         
         
         return response()->json($orders);
+    }
+
+    public function getRevenue()
+    {
+        $orders = Order::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, SUM(totalPrice) as total')
+        ->where('status', '!=', 'cancelled')
+        ->groupBy('year','month')
+        ->orderBy('year', 'DESC')
+        ->orderBy('month', 'DESC')->get();
+
+
+        $total = Order::where('status', '!=', 'cancelled')
+        ->sum('totalPrice');
+
+        return [
+            'revenue' => $orders,
+            'total' => $total
+        ];
     }
 }

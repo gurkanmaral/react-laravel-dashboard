@@ -1,29 +1,19 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
-import { DateRange } from 'react-day-picker';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-
-
 import Chart from "react-apexcharts";
 import { useGetReviews } from '@/lib/react-query/queriesAndMutations';
 
+interface Review {
+  title:string;
+  average_rating:number;
+}
+
 const ReviewChart = () => {
 
-    
+  const {data:reviewData} = useGetReviews();
 
-      const {data:reviewData} = useGetReviews();
+ const titles = reviewData ? reviewData?.map((item:Review)=>item.title) : [];
 
-
- const titles = reviewData ? reviewData?.map((item)=>item.title) : [];
-
- const average = reviewData ? reviewData?.map((item)=>item.average_rating): [];
-
- 
+ const average = reviewData ? reviewData?.map((item:Review)=>item.average_rating): [];
 
     const state = {
         series: [{
@@ -116,10 +106,8 @@ const ReviewChart = () => {
                         </div>                     
                         <div className='mt-10'>
                         <Chart
-                            series={state.series as any}
-                            options={state.options as any}
-                            type={'bar'}
-                            height={state.options.chart?.height as any}
+                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            series={state.series as any} options={state.options as any} type={'bar'} height={state.options.chart?.height as any}
                             />
                         </div>
                 </div>

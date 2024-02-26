@@ -1,5 +1,5 @@
-import { format, parseISO, startOfMonth } from 'date-fns';
-import React, { useEffect, useState } from 'react'
+import { format } from 'date-fns';
+import React from 'react'
 import { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
@@ -7,15 +7,16 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-
-
 import Chart from "react-apexcharts";
 import { useGetRevenue } from '@/lib/react-query/queriesAndMutations';
 
-const TotalRevenueChart = () => {
 
-    
-    const [data,setData] = useState([]);
+interface Revenue {
+  totalPrice: string;
+  date:string;
+}
+
+const TotalRevenueChart = () => {
 
     const currentDate = new Date();
     const oneYearAgo = new Date(currentDate);
@@ -32,11 +33,9 @@ const toDatee = date?.to ? format(date.to, 'yyyy-MM-dd') : [];
 
 const {data:revenueData} = useGetRevenue(fromDatee,toDatee)
 
- 
+const revenue = revenueData ? revenueData?.orders?.map((item:Revenue)=>item.totalPrice) : [];
 
- const revenue = revenueData ? revenueData?.orders?.map((item)=>item.totalPrice) : [];
-
-const dates = revenueData ?  revenueData?.orders?.map((item)=>item.date) : [];
+const dates = revenueData ?  revenueData?.orders?.map((item:Revenue)=>item.date) : [];
 
     const state = {
         series: [{
@@ -110,7 +109,6 @@ const dates = revenueData ?  revenueData?.orders?.map((item)=>item.date) : [];
                         <PopoverTrigger asChild>
                         <Button
                             id="date"
-                            variant={""}
                             className={cn(
                             "w-auto justify-start flex gap-2  font-normal",
                             !date && ""
@@ -149,12 +147,10 @@ const dates = revenueData ?  revenueData?.orders?.map((item)=>item.date) : [];
                                     </Button>
                             </div>
                         </div>                     
-                        <div>
+                        <div className=''>
                         <Chart
-                            series={state.series as any}
-                            options={state.options as any}
-                            type={'area'}
-                            height={state.options.chart?.height as any}
+                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            series={state.series as any}  options={state.options as any}   type={'area'}  height={state.options.chart?.height as any}
                             />
                         </div>
                 </div>

@@ -1,13 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from "zod"
-import { useToast } from "@/components/ui/use-toast"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
+import { toast } from "sonner"
 
 const SignUpValidation = z.object({
   name: z.string().min(2,{message:"At least 3 characters needed"}).max(50),
@@ -16,8 +16,16 @@ const SignUpValidation = z.object({
   password: z.string().min(5,{message: 'Password must be at least 8 characters'}).max(50),
 })
 
+interface SignUpProps {
+  name:string;
+  username:string;
+  email:string;
+  password:string;
+}
 
 const SignUpForm = () => {
+
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof SignUpValidation>>({
 
@@ -32,36 +40,51 @@ const SignUpForm = () => {
   })
   
 
-  const signUp = async (userData) => {
-    const response = await fetch('http://localhost/api/register', {
-        method:'POST',
+  const signUp = async (userData:SignUpProps) => {
+    try {
+      const response = await fetch('http://localhost/api/register', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body:JSON.stringify(userData),
-    });
+        body: JSON.stringify(userData),
+      });
+  
+      const data = await response.json(); 
+  
+      if (!response.ok) {
+     
+        toast(data.message || 'Registration failed');
+        return; 
+      }
+  
+      console.log(data);
+      toast(data.message);
 
-    if(!response.ok) {
-      throw new Error('error')
+      setTimeout(() => {
+        navigate('/sign-in'); 
+      }, 3000); 
+  
+      return data;
+  
+    } catch (error) {
+     
+      console.error('Error during registration:', error);
+      toast('An error occurred during registration.');
     }
-    
-    const data = await response.json();
-    console.log(data)
-      
-    return data;
-    
-  }
+  };
 
+  
   const mutation = useMutation({
-
+  // @ts-expect-error: Temporarily
        mutationFn:(values) => signUp(values)
   })
 
 
   async function onSubmit(values: z.infer<typeof SignUpValidation>)  {
 
-    console.log('Form submitted', values);
 
+  // @ts-expect-error: Temporarily
     mutation.mutate(values);
 
   }

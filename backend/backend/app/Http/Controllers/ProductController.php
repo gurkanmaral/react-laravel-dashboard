@@ -11,20 +11,22 @@ class ProductController extends Controller
     
     public function getInventoryLevels(Request $request)
     {
+    
         $query = Product::query();
     
-        if ($request->filled('category')) {
+       
+        $query->when($request->filled('category'), function ($query) use ($request) {
             $query->where('category', $request->category);
-        }
-        if ($request->filled('brand')) {
+        })
+        ->when($request->filled('brand'), function ($query) use ($request) {
             $query->where('brand', $request->brand);
-        }
-        if ($request->filled('color')) {
+        })
+        ->when($request->filled('color'), function ($query) use ($request) {
             $query->where('color', $request->color);
-        }
-    
-        $products = $query->select('title', 'numberInStock','id')->get();
-    
+        });
+
+        $products = $query->select('title', 'numberInStock', 'id')->get();
+
         return response()->json($products);
     }
     

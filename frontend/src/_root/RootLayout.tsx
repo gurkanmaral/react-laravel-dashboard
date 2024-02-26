@@ -1,6 +1,4 @@
-
 import Sidebar from '@/components/shared/Sidebar'
-import React from 'react'
 import { Outlet } from 'react-router-dom'
 
 const RootLayout = () => {

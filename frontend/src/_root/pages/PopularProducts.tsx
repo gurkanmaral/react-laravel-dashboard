@@ -13,8 +13,28 @@ import { useSearchParams } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
+interface Filters {
+  category?: string;
+  brand?: string;
+  color?: string;
+  search?: string;
+}
 
-
+interface ProductPageItems {
+  id: number;
+  title: string;
+  category: string;
+  color: string; 
+  description: string;
+  price: string; 
+  discount_price?: string | null; 
+  img?: string | null;
+  numberInStock: number;
+  active: number; 
+  created_at: string; 
+  updated_at: string; 
+  brand:string;
+}
 
 const PopularProducts = () => {
 
@@ -23,7 +43,7 @@ const PopularProducts = () => {
   const page = parseInt(searchParams.get('page') || '1', 10);
 
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     category: '',
     brand: '',
     color: '',
@@ -32,10 +52,11 @@ const PopularProducts = () => {
 
 
 
-const handleFilterChange = (value, filterType) => {
+const handleFilterChange = (value:string, filterType: keyof Filters) => {
   setFilters(prevFilters => {
    
       if (value === "All") {
+       // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const {[filterType]: _, ...rest} = prevFilters; 
           return {...rest};
       }
@@ -45,7 +66,6 @@ const handleFilterChange = (value, filterType) => {
 
   const {data:products,isLoading,refetch} = useGetProductDetails(filters,page)
 
-  console.log(products);
 
   useEffect(()=>{
     refetch()
@@ -54,13 +74,13 @@ const handleFilterChange = (value, filterType) => {
 
   const handlePrevPage = () => {
  if (page > 1) {
-        setSearchParams({ page: page - 1 });
+  setSearchParams({ page: (page - 1).toString() });
     }
    
   }
 
   const handleNextPage = () => {
-    setSearchParams({ page: page + 1 });
+    setSearchParams({ page: (page + 1).toString() });
     
   }
 
@@ -75,7 +95,6 @@ const handleFilterChange = (value, filterType) => {
     return () => clearTimeout(delayDebounce);
   }, [searchInput]);  
 
-  console.log(filters)
   return (
     <div className='w-full flex'>
          <div className='w-full flex flex-col pt-5 px-10'>
@@ -142,7 +161,7 @@ const handleFilterChange = (value, filterType) => {
                   </div>
 
                 </div>) :
-                products?.data?.map((item)=>(
+                products?.data?.map((item:ProductPageItems)=>(
                   <div key={item.id} className='grid grid-cols-5 border border-black/55 shadow-sm shadow-black/55 rounded-md'>
                       <div className='col-span-1'>
                           <img src={item.category === 'laptops' ? '/public/laptops-category.png' : '/public/phones-category.png'} alt=""  className='w-[100px] h-[100px] object-cover aspect-square '/>
