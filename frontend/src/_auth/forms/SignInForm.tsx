@@ -41,7 +41,7 @@ const SignInForm = () => {
 
 
   const signIn = async (userData:SignInProps) => {
-    const response = await fetch(`${APP_URL}/api/login`, {
+    const response = await fetch(`http://132.145.246.97/api/login`, {
         method:'POST',
         headers: {
           'Content-Type': 'application/json',

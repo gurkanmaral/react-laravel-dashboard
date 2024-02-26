@@ -3,15 +3,13 @@ import axios from "axios";
 import { format, parseISO, startOfMonth } from 'date-fns';
 import Filters from "./types";
 
-const APP_URL = process.env.LARAVEL_URL;
-
 
 export async function getCurrentUser()
 {
     const token = Cookies.get('dashboard_token')
 
    try {
-    const response = await fetch(`${APP_URL}/api/user`,{
+    const response = await fetch(`http://132.145.246.97/api/user`,{
         headers: {
           'Authorization' : `Bearer ${token}`
         }
@@ -36,7 +34,7 @@ export async function signOutUser()
 
     try {
 
-        const response = await fetch(`${APP_URL}/api/logout`,{
+        const response = await fetch(`http://132.145.246.97/api/logout`,{
           method:'POST',
             headers: {
                 'Authorization' : `Bearer ${token}`
@@ -62,7 +60,7 @@ export async function signOutUser()
 export async function getAllUsers(fromDate:string,toDate:string)
 {
 
-  let apiUrl = `${APP_URL}/api/users-by-month`;
+  let apiUrl = `http://132.145.246.97/api/users-by-month`;
 
   if (fromDate && toDate) {
     
@@ -83,7 +81,7 @@ export async function getAllUsers(fromDate:string,toDate:string)
 
 export async function getInventoryLevels(filters:Filters)
 {
-  let apiUrl = `${APP_URL}/api/inventory-levels`;
+  let apiUrl = `http://132.145.246.97/api/inventory-levels`;
 
 
       const queryParams = new URLSearchParams(
@@ -93,7 +91,7 @@ export async function getInventoryLevels(filters:Filters)
       ).toString();
 
 
-    apiUrl= `${APP_URL}/api/inventory-levels?${queryParams}`
+    apiUrl= `http://132.145.246.97/api/inventory-levels?${queryParams}`
 
     try {
         const response = await axios.get(apiUrl)
@@ -110,7 +108,7 @@ export async function getInventoryLevels(filters:Filters)
 
 export async function getTotalOrders(fromDate:string,toDate:string)
 {
-  let url = `${APP_URL}/api/order-count`;
+  let url = `http://132.145.246.97/api/order-count`;
 
   if (fromDate && toDate) {
     url += `?startDate=${fromDate}&endDate=${toDate}`; 
@@ -165,7 +163,7 @@ const groupDataByMonth = (data:Item[]) => {
 export async function mostBoughtProducts ()  {
    
   try {
-    const response = await axios.get(`${APP_URL}//api/most-bought-product`);
+    const response = await axios.get(`http://132.145.246.97/api/most-bought-product`);
 
   
       return response.data;
@@ -182,7 +180,7 @@ export async function mostBoughtProducts ()  {
 export async function getCountryData()
 {
   try {
-    const response = await axios.get(`${APP_URL}/api/get-countries-data`);
+    const response = await axios.get(`http://132.145.246.97/api/get-countries-data`);
 
   
     return response.data;
@@ -198,7 +196,7 @@ export async function getDeliveryTime()
 
 
   try {
-    const response = await axios.get(`${APP_URL}/api/get-delivered-data`);
+    const response = await axios.get(`http://132.145.246.97/api/get-delivered-data`);
 
   
     return response.data;
@@ -213,7 +211,7 @@ export async function getCancellationData()
 {
 
   try {
-    const response = await axios.get(`${APP_URL}/api/get-cancellation-data`);
+    const response = await axios.get(`http://132.145.246.97/api/get-cancellation-data`);
 
   
     return response.data;
@@ -226,7 +224,7 @@ export async function getCancellationData()
 
 export async function getRevenue(fromDate:string,toDate:string)
 {
-  let url = `${APP_URL}/api/get-total-revenue`;
+  let url = `http://132.145.246.97/api/get-total-revenue`;
 
   if (fromDate && toDate) {
     url += `?startDate=${fromDate}&endDate=${toDate}`; 
@@ -247,7 +245,7 @@ export async function getReviews()
 {
 
   try {
-    const response = await axios.get(`${APP_URL}//api/get-average-ratings`);
+    const response = await axios.get(`http://132.145.246.97/api/get-average-ratings`);
   
     return response.data;
       
@@ -259,7 +257,7 @@ export async function getReviews()
 
 export async function getTotalFollow(fromDate:string,toDate:string)
 {
-  let url = `${APP_URL}/api/get-total-follows`;
+  let url = `http://132.145.246.97/api/get-total-follows`;
 
   if (fromDate && toDate) {
     url += `?startDate=${fromDate}&endDate=${toDate}`; 
@@ -278,7 +276,7 @@ try {
 }
 export async function getTotalLikes(fromDate:string,toDate:string)
 {
-  let url = `${APP_URL}/api/get-total-likes`;
+  let url = `http://132.145.246.97/api/get-total-likes`;
 
   if (fromDate && toDate) {
     url += `?startDate=${fromDate}&endDate=${toDate}`; 
@@ -295,7 +293,7 @@ try {
 }
 export async function getTotalComments(fromDate:string,toDate:string)
 {
-  let url = `${APP_URL}/api/get-total-comments`;
+  let url = `http://132.145.246.97/api/get-total-comments`;
 
   if (fromDate && toDate) {
     url += `?startDate=${fromDate}&endDate=${toDate}`; 
@@ -315,7 +313,7 @@ export async function getAllUsersInUserPage(page:number, searchTerm:string)
 {
 
   try {
-    const response = await axios.get(`${APP_URL}/api/get-all-users`, {
+    const response = await axios.get(`http://132.145.246.97/api/get-all-users`, {
         params: { page, search: searchTerm },
     });
     return response.data;
@@ -329,7 +327,7 @@ export async function deleteUser(id:number)
 {
 
   try {
-      const response = await axios.delete(`${APP_URL}/api/user/${id}`)
+      const response = await axios.delete(`http://132.145.246.97/api/user/${id}`)
 
       return response.data;
   } catch (error) {
@@ -347,12 +345,12 @@ interface FilterState {
 
 export async function getOrderDetails(page:number,filters:FilterState)
 {
-  let apiUrl = `${APP_URL}/api/get-order-details`;
+  let apiUrl = `http://132.145.246.97/api/get-order-details`;
   try {
     // @ts-expect-error asda
     const queryParams = new URLSearchParams(filters).toString();
     
-    apiUrl= `${APP_URL}/api/get-order-details?${queryParams}`
+    apiUrl= `http://132.145.246.97/api/get-order-details?${queryParams}`
     const response = await axios.get(apiUrl,{
       params :{page:page}
     })
@@ -372,11 +370,11 @@ interface ProductFilters {
 
 export async function getProductDetails(filters:ProductFilters,page:number)
 {
-  let apiUrl = `${APP_URL}/api/get-product-details`;
+  let apiUrl = `http://132.145.246.97/api/get-product-details`;
   try {
     // @ts-expect-error asda
     const queryParams = new URLSearchParams(filters).toString();
-    apiUrl= `${APP_URL}/api/get-product-details?${queryParams}`
+    apiUrl= `http://132.145.246.97/api/get-product-details?${queryParams}`
 
     const response = await axios.get(apiUrl, {
       params: {page:page}
@@ -392,7 +390,7 @@ export async function getProductDetails(filters:ProductFilters,page:number)
 export async function getCountryDetails()
 {
   try {
-    const response = await axios.get(`${APP_URL}/api/get-country-details`)
+    const response = await axios.get(`http://132.145.246.97/api/get-country-details`)
 
     return response.data;
   } catch (error) {
@@ -404,7 +402,7 @@ export async function getCountryDetails()
 export async function getReviewDetails(page:number)
 {
   try {
-    const response = await axios.get(`${APP_URL}/api/get-review-details`,{
+    const response = await axios.get(`http://132.145.246.97/api/get-review-details`,{
       params: {page:page}
     })
 
@@ -418,7 +416,7 @@ export async function getReviewDetails(page:number)
 export async function addStock({ id, stock }:{id:number,stock:number})
 {
   try {
-    const response = await axios.post(`${APP_URL}/api/add-stock/${id}`,{
+    const response = await axios.post(`http://132.145.246.97/api/add-stock/${id}`,{
       stock:stock
     })
 
@@ -432,7 +430,7 @@ export async function addStock({ id, stock }:{id:number,stock:number})
 export async function getRevenueInPage()
 {
   try {
-      const response = await axios.get(`${APP_URL}/api/get-revenue`)
+      const response = await axios.get(`http://132.145.246.97/api/get-revenue`)
       return response.data
   } catch (error) {
     console.log(error)

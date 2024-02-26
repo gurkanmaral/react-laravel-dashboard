@@ -43,7 +43,7 @@ const SignUpForm = () => {
 
   const signUp = async (userData:SignUpProps) => {
     try {
-      const response = await fetch(`${APP_URL}/api/register`, {
+      const response = await fetch(`http://132.145.246.97/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
