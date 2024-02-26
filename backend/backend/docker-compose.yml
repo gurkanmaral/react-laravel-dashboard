@@ -9,8 +9,8 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '132.145.246.97:80:80' 
-      - '132.145.246.97:5174:5174'
+      - '80:80' 
+      - '5174:5174'
     environment:
       APP_URL: http://132.145.246.97
       WWWUSER: '${WWWUSER}'
