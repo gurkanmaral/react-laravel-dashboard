@@ -29,6 +29,11 @@ services:
       - 'host.docker.internal:host-gateway'
     ports:
       - '5174:5174'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.laravel.rule=Host(`https://132.145.246.97`)" 
+      - "traefik.http.routers.laravel.entrypoints=websecure"
+      - "traefik.http.routers.laravel.tls.certresolver=myresolver"
     environment:
       APP_URL: https://132.145.246.97
       WWWUSER: '${WWWUSER}'
