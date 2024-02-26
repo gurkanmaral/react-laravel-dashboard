@@ -29,7 +29,7 @@ function App() {
         </Route>
       <Route element={<RootLayout />}>
          <Route index element={<Navigate to="/dashboard" replace />} />
-             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+             <Route path="/dashboard" element={<Dashboard />} />
              <Route path="/users" element={<Users />}  />
              <Route path="/inventory" element={<Inventory />}  />
              <Route path="/total-orders" element={<TotalOrders />}  />

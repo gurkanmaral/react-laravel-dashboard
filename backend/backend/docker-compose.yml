@@ -1,4 +1,23 @@
 services:
+  traefik:
+    image: traefik:v2.4
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=you@example.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - sail
+
   laravel:
     build:
       context: ./vendor/laravel/sail/runtimes/8.3
@@ -9,10 +28,9 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
-      - '80:80' 
       - '5174:5174'
     environment:
-      APP_URL: http://132.145.246.97
+      APP_URL: https://132.145.246.97
       WWWUSER: '${WWWUSER}'
       LARAVEL_SAIL: '1'
       XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
