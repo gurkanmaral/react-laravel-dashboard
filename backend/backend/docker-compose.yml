@@ -10,7 +10,6 @@ services:
       - "--entrypoints.websecure.http.tls.certificates.certfile=/certs/traefik-selfsigned.crt"
       - "--entrypoints.websecure.http.tls.certificates.keyfile=/certs/traefik-selfsigned.key"
     ports:
-      - "80:80"
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
